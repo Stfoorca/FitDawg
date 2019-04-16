@@ -14,6 +14,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private Button button;
     private Button button_register;
+    private DatabaseReference mFirebaseDatabase;
 
 
     @Override
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
         button = (Button)findViewById(R.id.login);
         button_register = (Button)findViewById(R.id.register);
-
+        mFirebaseDatabase = FirebaseDatabase.getInstance().getReference().child("users");
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()){
                             currentUser = mAuth.getCurrentUser();
                             finish();
+
                             startActivity(new Intent(getApplicationContext(),
                                     ProfileActivity.class));
                         }else {

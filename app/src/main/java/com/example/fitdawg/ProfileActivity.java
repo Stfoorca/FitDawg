@@ -1,14 +1,25 @@
 package com.example.fitdawg;
 
+import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -20,22 +31,56 @@ public class ProfileActivity extends AppCompatActivity {
 
     public FirebaseAuth mAuth;
     public FirebaseUser user;
-
-
+    public DatabaseReference mDatabase, mDatabaseUserData;
+    public User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
 
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                currentUser = dataSnapshot.getValue(User.class);
+                ((Tab2Fragment)((SectionsPageAdapter)mViewPager.getAdapter()).getItem(1)).UpdateUserProfile(currentUser);
+
+                Log.d(TAG, "Value is: " + currentUser.email);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "Failed to read value.", databaseError.toException());
+            }
+        });
+
+        mDatabaseUserData = mDatabase.child("data").child("2019-04-16");
+
+        mDatabaseUserData.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                List<DataRecord> dataRecords = new ArrayList<>();
+                dataRecords.add(dataSnapshot.getValue(DataRecord.class));
+                if(dataRecords.size() >0) {
+                    ((Tab1Fragment) ((SectionsPageAdapter) mViewPager.getAdapter()).getItem(0)).UpdateDataList(dataRecords);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         setContentView(R.layout.profile_activity);
         Log.d(TAG, "onCreate: Starting.");
 
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
-
         mViewPager = (ViewPager) findViewById(R.id.container);
         setupViewPager(mViewPager);
 
@@ -43,13 +88,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         tabLayout.setupWithViewPager(mViewPager);
 
+
     }
 
     private void setupViewPager(ViewPager viewPager){
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new Tab1Fragment(), "TAB1");
-        adapter.addFragment(new Tab2Fragment(), "TAB2");
-        adapter.addFragment(new Tab3Fragment(), "TAB3");
+        adapter.addFragment(new Tab1Fragment(), "History");
+        adapter.addFragment(new Tab2Fragment(), "Profile");
+        adapter.addFragment(new Tab3Fragment(), "Charts");
 
         viewPager.setAdapter(adapter);
     }

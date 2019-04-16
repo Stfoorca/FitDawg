@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class Tab3Fragment extends Fragment{
-    private static final String TAG = "Tab1Fragment";
+    private static final String TAG = "Tab3Fragment";
 
     private Button btnTEST3;
 
