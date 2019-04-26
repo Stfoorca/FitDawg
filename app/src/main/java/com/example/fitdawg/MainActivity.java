@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Password required!", Toast.LENGTH_SHORT).show();
             return;
         }
+
         mAuth.signInWithEmailAndPassword(Email, Password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
