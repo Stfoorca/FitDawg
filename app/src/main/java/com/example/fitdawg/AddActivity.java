@@ -17,6 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 
 public class AddActivity extends AppCompatActivity {
 
@@ -25,6 +28,7 @@ public class AddActivity extends AppCompatActivity {
     private FirebaseUser mUser;
     private Button randomButton;
     private EditText armText, waistText, weightText;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,9 @@ public class AddActivity extends AppCompatActivity {
             }
         });
 
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     private void AddDataRecordToDatabase(String date, Double arm, Double waist, Double weight){

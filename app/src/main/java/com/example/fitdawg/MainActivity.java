@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.android.gms.ads.MobileAds;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MobileAds.initialize(this, "ca-app-pub-9970869944453043~8418312543");
 
         email = (EditText)findViewById(R.id.login_email_input);
         password = (EditText)findViewById(R.id.login_password_input);
@@ -58,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
 
     }
     public void LoginUser(){

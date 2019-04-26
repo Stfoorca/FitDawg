@@ -20,6 +20,7 @@
         <activity android:name=".ProfileActivity" />
         <activity android:name=".RegisterActivity"/>
         <activity android:name=".AddActivity"/>
+
     </application>
 
 </manifest>
