@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -92,6 +93,9 @@ public class RegisterActivity extends AppCompatActivity {
     public void RegisterUser(){
         String Email = email.getText().toString().trim();
         String Password = password.getText().toString().trim();
+
+        Switch simpleSwitch = (Switch) findViewById(R.id.terms);
+
         if (TextUtils.isEmpty(Email)){
             Toast.makeText(this, "Email required!", Toast.LENGTH_SHORT).show();
             return;
@@ -100,6 +104,11 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this, "Password required!", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (!simpleSwitch.isChecked()){
+            Toast.makeText(this, "Accept terms!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
 
         mAuth.createUserWithEmailAndPassword(Email, Password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

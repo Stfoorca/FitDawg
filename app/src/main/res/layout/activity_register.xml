@@ -63,6 +63,15 @@
         android:layout_below="@+id/year_spinner"
         android:id="@+id/height"
         android:inputType="numberDecimal"/>
+
+    <Switch
+        android:id="@+id/terms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="  I accept Terms of Service."
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
     <Button
         android:id="@+id/button_register"
         android:layout_width="wrap_content"
