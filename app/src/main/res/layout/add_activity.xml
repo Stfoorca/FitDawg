@@ -9,14 +9,13 @@ android:paddingTop="@dimen/activity_vertical_margin"
 tools:context=".AddActivity" >
 
     <TextView
-        android:layout_marginTop="200dp"
+        android:id="@+id/label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:text="Adding new record"
         android:textAlignment="center"
-        android:textSize="40dp"
-        android:id="@+id/label"
-        android:text="Adding new record"/>
+        android:textSize="40dp" />
 
     <EditText
         android:padding="10dp"

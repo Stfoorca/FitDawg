@@ -30,7 +30,7 @@ import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private static final String TAG ="ProfileActivity";
+    private static final String TAG = "ProfileActivity";
 
     private SectionsPageAdapter mSectionsPageAdapter;
 
@@ -55,7 +55,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 currentUser = dataSnapshot.getValue(User.class);
-                ((Tab2Fragment)((SectionsPageAdapter)mViewPager.getAdapter()).getItem(1)).UpdateUserProfile(currentUser);
+                ((Tab2Fragment) ((SectionsPageAdapter) mViewPager.getAdapter()).getItem(1)).UpdateUserProfile(currentUser);
 
                 Log.d(TAG, "Value is: " + currentUser.email);
             }
@@ -71,7 +71,7 @@ public class ProfileActivity extends AppCompatActivity {
         mDatabaseUserData.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ProcessDataFromDB((Map<String, Object>)dataSnapshot.getValue());
+                ProcessDataFromDB((Map<String, Object>) dataSnapshot.getValue());
             }
 
             @Override
@@ -93,7 +93,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    private void setupViewPager(ViewPager viewPager){
+    private void setupViewPager(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new Tab1Fragment(), "History");
         adapter.addFragment(new Tab2Fragment(), "Profile");
@@ -102,18 +102,18 @@ public class ProfileActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
-    private void ProcessDataFromDB(Map<String, Object> data){
-        if(data==null)
+    private void ProcessDataFromDB(Map<String, Object> data) {
+        if (data == null)
             return;
         List<DataRecord> records = new ArrayList();
 
-        for(Map.Entry<String, Object> entry : data.entrySet()){
-            Map singleData = (Map)entry.getValue();
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            Map singleData = (Map) entry.getValue();
 
-            records.add(new DataRecord(entry.getKey() ,Double.parseDouble(singleData.get("arm").toString()),  Double.parseDouble(singleData.get("waist").toString()),  Double.parseDouble(singleData.get("weight").toString())));
+            records.add(new DataRecord(entry.getKey(), Double.parseDouble(singleData.get("arm").toString()), Double.parseDouble(singleData.get("waist").toString()), Double.parseDouble(singleData.get("weight").toString())));
         }
 
-        if(records.size() >0) {
+        if (records.size() > 0) {
             ((Tab1Fragment) ((SectionsPageAdapter) mViewPager.getAdapter()).getItem(0)).UpdateDataList(records);
         }
     }
@@ -127,12 +127,14 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
-                if(user != null){
+                if (user != null) {
                     mAuth.signOut();
                     startActivity(new Intent(ProfileActivity.this, MainActivity.class));
                     Toast.makeText(ProfileActivity.this, "Logout successful!", Toast.LENGTH_SHORT).show();
                 }
                 return true;
+            case R.id.about:
+                Toast.makeText(ProfileActivity.this, "FitDawg 2019\n\nDamian Szkudlarek\nPaweł Przybyłowski\nBartosz Ptak", Toast.LENGTH_LONG).show();
             default:
                 return super.onOptionsItemSelected(item);
         }
