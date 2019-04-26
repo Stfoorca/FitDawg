@@ -17,4 +17,9 @@
         android:id="@+id/btnTEST3"
         android:text="TESTBTN 3"/>
 
+    <lecho.lib.hellocharts.view.LineChartView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/chart"
+        android:layout_below="@+id/btnTEST3"/>
 </RelativeLayout>
