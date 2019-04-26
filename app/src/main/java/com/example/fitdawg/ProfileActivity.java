@@ -37,6 +37,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private Button logoutBtn;
 
+    public List<DataRecord> records;
     public FirebaseAuth mAuth;
     public FirebaseUser user;
     public DatabaseReference mDatabase, mDatabaseUserData;
@@ -105,7 +106,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void ProcessDataFromDB(Map<String, Object> data) {
         if (data == null)
             return;
-        List<DataRecord> records = new ArrayList();
+        records = new ArrayList();
 
         for (Map.Entry<String, Object> entry : data.entrySet()) {
             Map singleData = (Map) entry.getValue();
