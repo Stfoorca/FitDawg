@@ -91,13 +91,14 @@ public class RegisterActivity extends AppCompatActivity {
         String Email = email.getText().toString().trim();
         String Password = password.getText().toString().trim();
         if (TextUtils.isEmpty(Email)){
-            Toast.makeText(this, "A Field is Empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Email required!", Toast.LENGTH_SHORT).show();
             return;
         }
         if (TextUtils.isEmpty(Password)){
-            Toast.makeText(this, "A Field is Empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Password required!", Toast.LENGTH_SHORT).show();
             return;
         }
+
         mAuth.createUserWithEmailAndPassword(Email, Password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override

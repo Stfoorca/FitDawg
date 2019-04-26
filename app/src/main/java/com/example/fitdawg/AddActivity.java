@@ -3,9 +3,11 @@ package com.example.fitdawg;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -49,13 +51,24 @@ public class AddActivity extends AppCompatActivity {
         randomButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Double arm = Double.parseDouble(armText.getText().toString());
-                Double waist = Double.parseDouble(waistText.getText().toString());
-                Double weight = Double.parseDouble(weightText.getText().toString());
 
-                AddDataRecordToDatabase(dateFormat.format(date), arm, waist, weight);
+                if (TextUtils.isEmpty(armText.getText())){
+                    Toast.makeText(AddActivity.this, "Arm required!", Toast.LENGTH_SHORT).show();
+                }
+                else if (TextUtils.isEmpty(waistText.getText())){
+                    Toast.makeText(AddActivity.this, "Waist required!", Toast.LENGTH_SHORT).show();
+                }
+                else if (TextUtils.isEmpty(weightText.getText())){
+                    Toast.makeText(AddActivity.this, "Weight required!", Toast.LENGTH_SHORT).show();
+                }else{
+                    Double arm = Double.parseDouble(armText.getText().toString());
+                    Double waist = Double.parseDouble(waistText.getText().toString());
+                    Double weight = Double.parseDouble(weightText.getText().toString());
 
-                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                    AddDataRecordToDatabase(dateFormat.format(date), arm, waist, weight);
+
+                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                }
             }
         });
 
