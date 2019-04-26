@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -58,17 +59,12 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        mDatabaseUserData = mDatabase.child("data").child("2019-04-16");
+        mDatabaseUserData = mDatabase.child("data");
 
         mDatabaseUserData.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                List<DataRecord> dataRecords = new ArrayList<>();
-                dataRecords.add(dataSnapshot.getValue(DataRecord.class));
-                if(dataRecords.size() >0) {
-                    ((Tab1Fragment) ((SectionsPageAdapter) mViewPager.getAdapter()).getItem(0)).UpdateDataList(dataRecords);
-                }
+                ProcessDataFromDB((Map<String, Object>)dataSnapshot.getValue());
             }
 
             @Override
@@ -87,8 +83,6 @@ public class ProfileActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         tabLayout.setupWithViewPager(mViewPager);
-
-
     }
 
     private void setupViewPager(ViewPager viewPager){
@@ -98,6 +92,22 @@ public class ProfileActivity extends AppCompatActivity {
         adapter.addFragment(new Tab3Fragment(), "Charts");
 
         viewPager.setAdapter(adapter);
+    }
+
+    private void ProcessDataFromDB(Map<String, Object> data){
+        if(data==null)
+            return;
+        List<DataRecord> records = new ArrayList();
+
+        for(Map.Entry<String, Object> entry : data.entrySet()){
+            Map singleData = (Map)entry.getValue();
+
+            records.add(new DataRecord(entry.getKey() ,Double.parseDouble(singleData.get("arm").toString()),  Double.parseDouble(singleData.get("waist").toString()),  Double.parseDouble(singleData.get("weight").toString())));
+        }
+
+        if(records.size() >0) {
+            ((Tab1Fragment) ((SectionsPageAdapter) mViewPager.getAdapter()).getItem(0)).UpdateDataList(records);
+        }
     }
 
 }

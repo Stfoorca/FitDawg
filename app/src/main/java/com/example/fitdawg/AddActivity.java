@@ -24,7 +24,7 @@ public class AddActivity extends AppCompatActivity {
     private DatabaseReference mDatabase, newUser;
     private FirebaseUser mUser;
     private Button randomButton;
-    private EditText armText, waistText, weightText, heightText;
+    private EditText armText, waistText, weightText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class AddActivity extends AppCompatActivity {
         armText = findViewById(R.id.arm);
         waistText = findViewById(R.id.waist);
         weightText = findViewById(R.id.weight);
-        heightText = findViewById(R.id.height);
+
 
         randomButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,9 +48,8 @@ public class AddActivity extends AppCompatActivity {
                 Double arm = Double.parseDouble(armText.getText().toString());
                 Double waist = Double.parseDouble(waistText.getText().toString());
                 Double weight = Double.parseDouble(weightText.getText().toString());
-                Double height = Double.parseDouble(heightText.getText().toString());
 
-                AddDataRecordToDatabase(dateFormat.format(date), arm, height, waist, weight);
+                AddDataRecordToDatabase(dateFormat.format(date), arm, waist, weight);
 
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
             }
@@ -58,8 +57,8 @@ public class AddActivity extends AppCompatActivity {
 
     }
 
-    private void AddDataRecordToDatabase(String date, Double arm, Double height, Double waist, Double weight){
-        DataRecord dataRecord = new DataRecord(arm, height, waist, weight);
+    private void AddDataRecordToDatabase(String date, Double arm, Double waist, Double weight){
+        DataRecord dataRecord = new DataRecord(date, arm, waist, weight);
         mDatabase.child(date).setValue(dataRecord);
     }
 }

@@ -1,13 +1,14 @@
 package com.example.fitdawg;
 
 public class DataRecord {
-    Double arm, height, waist, weight;
+    Double arm, waist, weight;
+    String date;
 
     public DataRecord(){}
 
-    public DataRecord(Double arm, Double height, Double waist, Double weight){
+    public DataRecord(String date, Double arm, Double waist, Double weight){
+        this.date = date;
         this.arm=arm;
-        this.height=height;
         this.waist=waist;
         this.weight=weight;
     }

@@ -34,19 +34,9 @@ tools:context=".AddActivity" >
         android:layout_margin="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="height"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/arm"
-        android:id="@+id/height"
-        android:inputType="numberDecimal"/>
-    <EditText
-        android:padding="10dp"
-        android:layout_margin="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:hint="waist"
-        android:layout_below="@+id/height"
+        android:layout_below="@+id/arm"
         android:id="@+id/waist"
         android:inputType="numberDecimal"/>
     <EditText
