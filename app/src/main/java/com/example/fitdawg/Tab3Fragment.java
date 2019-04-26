@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,25 +26,21 @@ import lecho.lib.hellocharts.view.LineChartView;
 public class Tab3Fragment extends Fragment{
     private static final String TAG = "Tab3Fragment";
 
-    private Button btnTEST3;
+    private AdView mAdView;
     public ProfileActivity profileActivity;
     private View view;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         view = inflater.inflate(R.layout.tab3_fragment, container, false);
-        btnTEST3 = (Button) view.findViewById(R.id.btnTEST3);
+
         profileActivity = (ProfileActivity) getActivity();
 
         CreateChart();
-        btnTEST3.setOnClickListener(new View.OnClickListener(){
 
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "TESTING BUTTON CLICK 3", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        mAdView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
         return view;
     }
 

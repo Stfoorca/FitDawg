@@ -93,7 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void RegisterUser(){
         String Email = email.getText().toString().trim();
         String Password = password.getText().toString().trim();
-
+        String Height = height.getText().toString().trim();
         Switch simpleSwitch = (Switch) findViewById(R.id.terms);
 
         if (TextUtils.isEmpty(Email)){
@@ -102,6 +102,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
         if (TextUtils.isEmpty(Password)){
             Toast.makeText(this, "Password required!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(Height)){
+            Toast.makeText(this, "Height required!", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!simpleSwitch.isChecked()){
