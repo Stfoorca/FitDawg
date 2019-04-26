@@ -46,17 +46,6 @@ public class Tab2Fragment extends Fragment{
         addButton = (Button) view.findViewById(R.id.addButton);
         logoutBtn = (Button) view.findViewById(R.id.logout);
 
-        logoutBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                if(profileActivity.user != null){
-                    profileActivity.mAuth.signOut();
-                    startActivity(new Intent(getActivity(), MainActivity.class));
-                    Toast.makeText(getActivity(), "Logout successful!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
