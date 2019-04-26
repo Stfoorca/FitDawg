@@ -76,4 +76,38 @@
         android:textAlignment="center"
         android:textSize="18sp" />
 
+    <TextView
+        android:id="@+id/height"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gender"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="20dp"
+        android:text="Tab2"
+        android:gravity="left"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+    <TextView
+        android:id="@+id/weight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/height"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="20dp"
+        android:text="Tab2"
+        android:gravity="left"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+    <TextView
+        android:id="@+id/bmi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/weight"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="20dp"
+        android:text="Tab2"
+        android:gravity="left"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
 </RelativeLayout>

@@ -36,6 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private EditText email;
+    private EditText height;
     private Button button_register;
     private Button button_login;
     private Spinner gender_spinner;
@@ -52,6 +53,7 @@ public class RegisterActivity extends AppCompatActivity {
         username = (EditText) findViewById(R.id.signup_name_input);
         email = (EditText) findViewById(R.id.signup_email_input);
         password =(EditText) findViewById(R.id.signup_password_input);
+        height = (EditText)findViewById(R.id.height);
         button_register = (Button)findViewById(R.id.button_register);
         gender_spinner = (Spinner)findViewById(R.id.gender_spinner);
         year_spinner = (Spinner)findViewById(R.id.year_spinner);
@@ -82,8 +84,8 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
-    private void AddNewUser(String userId, String username, String email, String sex, String bornYear){
-        User user = new User(username, email, sex, bornYear);
+    private void AddNewUser(String userId, String username, String email, String sex, String bornYear, String height){
+        User user = new User(username, email, sex, bornYear, height);
         mDatabase.child(userId).setValue(user);
     }
 
@@ -112,12 +114,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 mUser = task.getResult().getUser();
                                 newUser = mDatabase.child(mUser.getUid());
 
-                                String gender;
-                                if(gender_spinner.getSelectedItem().toString() == "Female"){
-                                    gender = "F";
-                                }
-                                else gender = "M";
-
+                                String gender = gender_spinner.getSelectedItem().toString();
                                 //CreateUserProfileImage(mUser);
                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setPhotoUri(Uri.parse("https://ocdn.eu/images/zapytaj/NWI7MDMsMCwxMmMsMCwxOzAzLDEyYywwLDAsMQ__/bd1db4a251df98795d3bb4c176248237.jpeg")).build();
                                 mUser.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -132,7 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 });
 
-                                AddNewUser(mUser.getUid(), username.getText().toString(), email.getText().toString().trim(), gender, year_spinner.getSelectedItem().toString());
+                                AddNewUser(mUser.getUid(), username.getText().toString(), email.getText().toString().trim(), gender, year_spinner.getSelectedItem().toString(), height.getText().toString());
                                 finish();
 
                                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));

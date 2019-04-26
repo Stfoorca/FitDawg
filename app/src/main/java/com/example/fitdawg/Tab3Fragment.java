@@ -46,7 +46,10 @@ public class Tab3Fragment extends Fragment{
     }
 
     public void CreateChart(){
-
+        if(profileActivity.records==null) {
+            System.out.println(profileActivity.records);
+            return;
+        }
         LineChartView lineChartView = view.findViewById(R.id.chart);
         List<Double> yAxisDataArm = new ArrayList<Double>();
         List<Double> yAxisDataWaist = new ArrayList<Double>();
@@ -97,7 +100,4 @@ public class Tab3Fragment extends Fragment{
         data.setAxisYLeft(yAxis);
 
     }
-
-
-
 }

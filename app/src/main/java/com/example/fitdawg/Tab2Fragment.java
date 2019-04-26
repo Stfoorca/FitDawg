@@ -24,7 +24,7 @@ public class Tab2Fragment extends Fragment{
     private static final String TAG = "Tab2Fragment";
 
     private Button logoutBtn, addButton;
-    private TextView tab2username, tab2email, tab2gender, tab2age;
+    private TextView tab2username, tab2email, tab2gender, tab2age, tab2height, tab2bmi, tab2weight;
     private ImageView tab2profileImage;
     public ProfileActivity profileActivity;
     private FirebaseUser mUser;
@@ -41,6 +41,10 @@ public class Tab2Fragment extends Fragment{
         tab2gender = (TextView)view.findViewById(R.id.gender);
         tab2age = (TextView)view.findViewById(R.id.age);
         tab2profileImage = (ImageView)view.findViewById(R.id.profileImage);
+        tab2height = (TextView)view.findViewById(R.id.height);
+        tab2bmi = (TextView)view.findViewById(R.id.bmi);
+        tab2weight = view.findViewById(R.id.weight);
+
         mUser = profileActivity.mAuth.getCurrentUser();
 
         addButton = (Button) view.findViewById(R.id.addButton);
@@ -63,6 +67,11 @@ public class Tab2Fragment extends Fragment{
         tab2email.setText("Email:   " + user.email);
         tab2gender.setText("Gender:     " + user.gender);
         tab2age.setText("Age:   " + Integer.toString(Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(user.year)));
+        tab2height.setText("Height:     " + user.height);
+        tab2weight.setText("Weight:     " + user.weight);
+        if(user.weight!="0")
+            tab2bmi.setText("BMI:   " + (Float.parseFloat(user.weight)/(Float.parseFloat(user.height)*Float.parseFloat(user.height))));
+        else tab2bmi.setText("Brak pomiaru wagi");
         Picasso.get().load(mUser.getPhotoUrl()).into(tab2profileImage);
     }
 }

@@ -53,6 +53,16 @@
         android:layout_height="wrap_content"
         android:background="@android:drawable/btn_dropdown"
         android:spinnerMode="dropdown" />
+    <EditText
+        android:padding="10dp"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hint="height"
+        android:layout_below="@+id/year_spinner"
+        android:id="@+id/height"
+        android:inputType="numberDecimal"/>
     <Button
         android:id="@+id/button_register"
         android:layout_width="wrap_content"

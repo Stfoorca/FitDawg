@@ -37,7 +37,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private Button logoutBtn;
 
-    public List<DataRecord> records;
+    public List<DataRecord> records = new ArrayList();
     public FirebaseAuth mAuth;
     public FirebaseUser user;
     public DatabaseReference mDatabase, mDatabaseUserData;
@@ -56,6 +56,12 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 currentUser = dataSnapshot.getValue(User.class);
+                if(records.size()>0) {
+                    currentUser.weight = records.get(records.size()-1).weight.toString();
+                }
+                else{
+                    currentUser.weight = "0";
+                }
                 ((Tab2Fragment) ((SectionsPageAdapter) mViewPager.getAdapter()).getItem(1)).UpdateUserProfile(currentUser);
 
                 Log.d(TAG, "Value is: " + currentUser.email);
