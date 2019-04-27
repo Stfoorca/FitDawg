@@ -1,6 +1,7 @@
 package com.example.fitdawg;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,12 +31,20 @@ public class MainActivity extends AppCompatActivity {
     private Button button_register;
     private DatabaseReference mFirebaseDatabase;
 
+    public static MainActivity instrance;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instrance = this;
         setContentView(R.layout.activity_main);
         MobileAds.initialize(this, "ca-app-pub-9970869944453043~8418312543");
+
+        if (CheckUser()){
+            return;
+        }
+        SharedPreferences SP = getApplicationContext().getSharedPreferences("LOADED", 0);
 
         email = (EditText)findViewById(R.id.login_email_input);
         password = (EditText)findViewById(R.id.login_password_input);
@@ -84,10 +93,13 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
                             currentUser = mAuth.getCurrentUser();
-                            finish();
+
+                            UtilsClipCodes.saveSharedSetting(MainActivity.this, "LOADED", "true");
+                            UtilsClipCodes.SharedPrefesSAVE(getApplicationContext(), email.getText().toString().trim());
 
                             startActivity(new Intent(getApplicationContext(),
                                     ProfileActivity.class));
+                            finish();
                         }else {
                             Toast.makeText(MainActivity.this, "couldn't activity_main",
                                     Toast.LENGTH_SHORT).show();
@@ -95,6 +107,21 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    public Boolean CheckUser(){
+        Boolean check = Boolean.valueOf(UtilsClipCodes.readSharedSetting(MainActivity.this, "LOADED", "false"));
+
+        if (check){
+
+            startActivity(new Intent(getApplicationContext(),
+                    ProfileActivity.class));
+            finish();
+            return true;
+        }
+        return false;
+    }
+
+
 
 
 }

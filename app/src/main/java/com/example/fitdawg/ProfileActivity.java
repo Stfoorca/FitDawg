@@ -1,6 +1,7 @@
 package com.example.fitdawg;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -136,8 +137,12 @@ public class ProfileActivity extends AppCompatActivity {
             case R.id.logout:
                 if (user != null) {
                     mAuth.signOut();
+                    UtilsClipCodes.saveSharedSetting(MainActivity.instrance, "LOADED", "false");
+                    UtilsClipCodes.SharedPrefesSAVE(getApplicationContext(), "");
+                    SharedPreferences SP = getApplicationContext().getSharedPreferences("LOADED", 0);
                     startActivity(new Intent(ProfileActivity.this, MainActivity.class));
                     Toast.makeText(ProfileActivity.this, "Logout successful!", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
                 return true;
             case R.id.about:
