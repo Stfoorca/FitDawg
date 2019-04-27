@@ -137,10 +137,9 @@ public class ProfileActivity extends AppCompatActivity {
             case R.id.logout:
                 if (user != null) {
                     mAuth.signOut();
-                    UtilsClipCodes.saveSharedSetting(MainActivity.instrance, "LOADED", "false");
-                    UtilsClipCodes.SharedPrefesSAVE(getApplicationContext(), "");
-                    SharedPreferences SP = getApplicationContext().getSharedPreferences("LOADED", 0);
+                    UtilsClipCodes.saveSharedSetting(MainActivity.instrance, "LOADED", false);
                     startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+
                     Toast.makeText(ProfileActivity.this, "Logout successful!", Toast.LENGTH_SHORT).show();
                     finish();
                 }

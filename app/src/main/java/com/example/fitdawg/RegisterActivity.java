@@ -144,10 +144,11 @@ public class RegisterActivity extends AppCompatActivity {
                                 });
 
                                 AddNewUser(mUser.getUid(), username.getText().toString(), email.getText().toString().trim(), gender, year_spinner.getSelectedItem().toString(), height.getText().toString());
-                                finish();
-                                UtilsClipCodes.saveSharedSetting(MainActivity.instrance, "LOADED", "true");
-                                UtilsClipCodes.SharedPrefesSAVE(getApplicationContext(), email.getText().toString().trim());
+
+                                UtilsClipCodes.saveSharedSetting(MainActivity.instrance, "LOADED", true);
+
                                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                                finish();
                             }else{
                                 Toast.makeText(RegisterActivity.this, "Couldn't register, try again",
                                         Toast.LENGTH_SHORT).show();
