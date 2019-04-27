@@ -37,6 +37,7 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.UUID;
 
 public class Tab2Fragment extends Fragment{
@@ -97,12 +98,17 @@ public class Tab2Fragment extends Fragment{
 
         tab2username.setText(user.name);
         tab2email.setText("Email:   " + user.email);
-        tab2gender.setText("Gender:     " + user.gender);
+        if (user.gender.toString().equals("M")){
+            tab2gender.setText("Gender:     " + "Male");
+        }else{
+            tab2gender.setText("Gender:     " + "Female");
+        }
+
         tab2age.setText("Age:   " + Integer.toString(Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(user.year)));
         tab2height.setText("Height:     " + user.height);
         tab2weight.setText("Weight:     " + user.weight);
         if(user.weight!="0")
-            tab2bmi.setText("BMI:   " + (Float.parseFloat(user.weight)/(Float.parseFloat(user.height)*Float.parseFloat(user.height))));
+            tab2bmi.setText("BMI:   " + String.format(Locale.UK, "%.2f",(Float.parseFloat(user.weight)/(Float.parseFloat(user.height)*Float.parseFloat(user.height))*100*100)));
         else tab2bmi.setText("Brak pomiaru wagi");
         Uri test = mUser.getPhotoUrl();
         Picasso.get().load(mUser.getPhotoUrl()).into(tab2profileImage);

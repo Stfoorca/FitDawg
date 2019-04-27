@@ -1,5 +1,6 @@
 package com.example.fitdawg;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.ContactsContract;
@@ -51,6 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;
+
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
@@ -140,11 +142,14 @@ public class ProfileActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.logout:
                 if (user != null) {
+
+                    Context ctx = getApplicationContext();
+                    UtilsClipCodes.saveSharedSetting(ctx, "LOADED", false);
                     mAuth.signOut();
-                    UtilsClipCodes.saveSharedSetting(MainActivity.instrance, "LOADED", false);
-                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
                     Toast.makeText(ProfileActivity.this, "Logout successful!", Toast.LENGTH_SHORT).show();
+
                     finish();
                 }
                 return true;

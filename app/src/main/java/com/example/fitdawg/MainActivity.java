@@ -1,5 +1,6 @@
 package com.example.fitdawg;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText email;
     private EditText password;
-    private FirebaseAuth mAuth;
+    public FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private Button button;
     private Button button_register;
@@ -44,10 +45,11 @@ public class MainActivity extends AppCompatActivity {
 
         CheckUser();
 
+
+
         email = (EditText)findViewById(R.id.login_email_input);
         password = (EditText)findViewById(R.id.login_password_input);
         mAuth = FirebaseAuth.getInstance();
-//        currentUser = mAuth.getCurrentUser();
         button = (Button)findViewById(R.id.login);
         button_register = (Button)findViewById(R.id.register);
         mFirebaseDatabase = FirebaseDatabase.getInstance().getReference().child("users");
@@ -72,8 +74,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
     public void LoginUser(){
         String Email = email.getText().toString().trim();
@@ -88,17 +88,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
             mAuth.signInWithEmailAndPassword(Email, Password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()){
-                                currentUser = mAuth.getCurrentUser();
 
-                                UtilsClipCodes.saveSharedSetting(MainActivity.this, "LOADED", true);
+                                Context ctx = getApplicationContext();
+                                UtilsClipCodes.saveSharedSetting(ctx, "LOADED", true);
 
-                                startActivity(new Intent(getApplicationContext(),
+                                startActivity(new Intent(MainActivity.this,
                                         ProfileActivity.class));
-                                finish();
+                               // finish();
                             }else {
                                 Toast.makeText(MainActivity.this, "couldn't activity_main",
                                         Toast.LENGTH_SHORT).show();
@@ -109,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void CheckUser(){
-        Boolean check = UtilsClipCodes.readSharedSetting(MainActivity.this, "LOADED", false);
+        Context ctx = getApplicationContext();
+        Boolean check = UtilsClipCodes.readSharedSetting(ctx, "LOADED", false);
 
         Intent inte = new Intent(getApplicationContext(),
                 ProfileActivity.class);
@@ -117,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (check){
             startActivity(inte);
-            finish();
         }
+
     }
 
 
