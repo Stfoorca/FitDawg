@@ -45,11 +45,13 @@ public class Tab3Fragment extends Fragment{
     }
 
     public void CreateChart(){
+        LineChartView lineChartView = view.findViewById(R.id.chart);
+
         if(profileActivity.records==null) {
-            System.out.println(profileActivity.records);
+            lineChartView.setVisibility(View.INVISIBLE);
             return;
         }
-        LineChartView lineChartView = view.findViewById(R.id.chart);
+        lineChartView.setVisibility(View.VISIBLE);
         List<Double> yAxisDataArm = new ArrayList<Double>();
         List<Double> yAxisDataWaist = new ArrayList<Double>();
         List<Double> yAxisDataWeight = new ArrayList<Double>();

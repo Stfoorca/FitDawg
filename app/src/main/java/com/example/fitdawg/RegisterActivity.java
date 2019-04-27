@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -42,10 +43,10 @@ public class RegisterActivity extends AppCompatActivity {
     private Button button_login;
     private Spinner gender_spinner;
     private Spinner year_spinner;
-
     private DatabaseReference mDatabase, newUser;
     private FirebaseUser mUser;
     private UserProfileChangeRequest.Builder mUpcr;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,12 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (v == button_register){
-                    RegisterUser();
+                    try {
+                        RegisterUser();
+                    }
+                    catch(InterruptedException e){
+                        Log.e("xD",e.getMessage());
+                    }
                 }
             }
         });
@@ -90,7 +96,7 @@ public class RegisterActivity extends AppCompatActivity {
         mDatabase.child(userId).setValue(user);
     }
 
-    public void RegisterUser(){
+    public void RegisterUser() throws InterruptedException {
         String Email = email.getText().toString().trim();
         String Password = password.getText().toString().trim();
         String Height = height.getText().toString().trim();
@@ -121,6 +127,8 @@ public class RegisterActivity extends AppCompatActivity {
                         try {
                             //check if successful
                             if (task.isSuccessful()) {
+
+
                                 //User is successfully registered and logged in
                                 //start Profile Activity here
                                 Toast.makeText(RegisterActivity.this, "Registration successful",
@@ -129,7 +137,9 @@ public class RegisterActivity extends AppCompatActivity {
                                 newUser = mDatabase.child(mUser.getUid());
 
                                 String gender = gender_spinner.getSelectedItem().toString();
-                                //CreateUserProfileImage(mUser);
+
+                                AddNewUser(mUser.getUid(), username.getText().toString(), email.getText().toString().trim(), gender, year_spinner.getSelectedItem().toString(), height.getText().toString());
+
                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setPhotoUri(Uri.parse("https://ocdn.eu/images/zapytaj/NWI7MDMsMCwxMmMsMCwxOzAzLDEyYywwLDAsMQ__/bd1db4a251df98795d3bb4c176248237.jpeg")).build();
                                 mUser.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
@@ -137,18 +147,15 @@ public class RegisterActivity extends AppCompatActivity {
                                         if(task.isSuccessful()){
                                             Toast.makeText(RegisterActivity.this, "Profile image set successfully!",
                                                     Toast.LENGTH_SHORT).show();
+                                            startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+
+                                            finish();
                                         }
 
                                     }
 
                                 });
 
-                                AddNewUser(mUser.getUid(), username.getText().toString(), email.getText().toString().trim(), gender, year_spinner.getSelectedItem().toString(), height.getText().toString());
-
-                                UtilsClipCodes.saveSharedSetting(MainActivity.instrance, "LOADED", true);
-
-                                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                                finish();
                             }else{
                                 Toast.makeText(RegisterActivity.this, "Couldn't register, try again",
                                         Toast.LENGTH_SHORT).show();
@@ -158,11 +165,7 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     }
                 });
+
     }
 
-    private void CreateUserProfileImage(FirebaseUser tempUser){
-        Uri uri = Uri.parse("https://ocdn.eu/images/zapytaj/NWI7MDMsMCwxMmMsMCwxOzAzLDEyYywwLDAsMQ__/bd1db4a251df98795d3bb4c176248237.jpeg");
-        mUpcr.setPhotoUri(uri);
-        tempUser.updateProfile(mUpcr.build());
-    }
 }

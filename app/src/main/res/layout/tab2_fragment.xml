@@ -12,7 +12,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         app:civ_border_color="@color/colorAccent"
-        app:civ_border_width="3dp" />
+        app:civ_border_width="3dp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/username"

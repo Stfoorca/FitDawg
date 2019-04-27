@@ -1,7 +1,7 @@
 package com.example.fitdawg;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,14 +45,29 @@ public class ProfileActivity extends AppCompatActivity {
     public DatabaseReference mDatabase, mDatabaseUserData;
     public User currentUser;
 
+    public static ProfileActivity instance;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        instance = this;
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+
+        mDatabaseUserData = mDatabase.child("data");
+
+        mDatabaseUserData.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ProcessDataFromDB((Map<String, Object>) dataSnapshot.getValue());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -74,19 +90,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        mDatabaseUserData = mDatabase.child("data");
 
-        mDatabaseUserData.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ProcessDataFromDB((Map<String, Object>) dataSnapshot.getValue());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
         setContentView(R.layout.profile_activity);
         Log.d(TAG, "onCreate: Starting.");
@@ -151,5 +155,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    public void UpdateProfileImage(FirebaseUser mUser, Uri imageURI){
+        Picasso.get().load(imageURI).into(((Tab2Fragment) ((SectionsPageAdapter) mViewPager.getAdapter()).getItem(1)).tab2profileImage);
+
+    }
 
 }
