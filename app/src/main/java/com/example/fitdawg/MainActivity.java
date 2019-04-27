@@ -1,10 +1,12 @@
 package com.example.fitdawg;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -30,12 +32,17 @@ public class MainActivity extends AppCompatActivity {
     private Button button_register;
     private DatabaseReference mFirebaseDatabase;
 
+    public static MainActivity instrance;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instrance = this;
         setContentView(R.layout.activity_main);
         MobileAds.initialize(this, "ca-app-pub-9970869944453043~8418312543");
+
+        CheckUser();
 
         email = (EditText)findViewById(R.id.login_email_input);
         password = (EditText)findViewById(R.id.login_password_input);
@@ -49,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (v == button){
+
                     LoginUser();
+
                 }
             }
         });
@@ -78,23 +87,41 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        mAuth.signInWithEmailAndPassword(Email, Password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            currentUser = mAuth.getCurrentUser();
-                            finish();
+            mAuth.signInWithEmailAndPassword(Email, Password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()){
+                                currentUser = mAuth.getCurrentUser();
 
-                            startActivity(new Intent(getApplicationContext(),
-                                    ProfileActivity.class));
-                        }else {
-                            Toast.makeText(MainActivity.this, "couldn't activity_main",
-                                    Toast.LENGTH_SHORT).show();
+                                UtilsClipCodes.saveSharedSetting(MainActivity.this, "LOADED", true);
+
+                                startActivity(new Intent(getApplicationContext(),
+                                        ProfileActivity.class));
+                                finish();
+                            }else {
+                                Toast.makeText(MainActivity.this, "couldn't activity_main",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+
     }
+
+    public void CheckUser(){
+        Boolean check = UtilsClipCodes.readSharedSetting(MainActivity.this, "LOADED", false);
+
+        Intent inte = new Intent(getApplicationContext(),
+                ProfileActivity.class);
+        inte.putExtra("LOADED", check);
+
+        if (check){
+            startActivity(inte);
+            finish();
+        }
+    }
+
+
 
 
 }
