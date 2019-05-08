@@ -21,9 +21,8 @@ import java.util.List;
 public class Tab1Fragment extends Fragment{
     private static final String TAG = "Tab1Fragment";
     private ListView historyListView;
-    List dateList = new ArrayList();
-    private List detailsList = new ArrayList();
-    ArrayAdapter adapter;
+    private ArrayList<Person> detailsList = new ArrayList<>();
+    PersonListAdapter adapter;
     public ProfileActivity profileActivity;
     @Nullable
     @Override
@@ -31,7 +30,7 @@ public class Tab1Fragment extends Fragment{
         View view = inflater.inflate(R.layout.tab1_fragment, container, false);
         historyListView = (ListView) view.findViewById(R.id.historyList);
         profileActivity = (ProfileActivity) getActivity();
-        adapter = new ArrayAdapter(profileActivity.getApplicationContext(), android.R.layout.simple_list_item_1, detailsList);
+        adapter = new PersonListAdapter(profileActivity.getApplicationContext(), R.layout.adapter_view, detailsList);
         historyListView.setAdapter(adapter);
         return view;
     }
@@ -41,10 +40,10 @@ public class Tab1Fragment extends Fragment{
         detailsList.clear();
         for(int i=0;i<dataRecords.size();i++){
             if(dataRecords.get(i)!=null) {
-                detailsList.add("Date" + dataRecords.get(i).date + "Weight " + dataRecords.get(i).weight.toString() + " | Arm " + dataRecords.get(i).arm.toString() + "| Waist" + dataRecords.get(i).waist.toString());
+                detailsList.add(new Person(dataRecords.get(i).date,dataRecords.get(i).weight.toString(),dataRecords.get(i).arm.toString(),dataRecords.get(i).waist.toString()));
             }
         }
-        adapter = new ArrayAdapter(profileActivity.getApplicationContext(), android.R.layout.simple_list_item_1, detailsList);
+        adapter = new PersonListAdapter(profileActivity.getApplicationContext(), R.layout.adapter_view, detailsList);
         historyListView.setAdapter(adapter);
     }
 

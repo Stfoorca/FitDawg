@@ -28,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -128,6 +129,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         if (records.size() > 0) {
+            Collections.reverse(records);
             ((Tab1Fragment) ((SectionsPageAdapter) mViewPager.getAdapter()).getItem(0)).UpdateDataList(records);
         }
     }
