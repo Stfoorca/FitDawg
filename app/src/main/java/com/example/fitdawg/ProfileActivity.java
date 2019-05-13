@@ -29,6 +29,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -129,7 +130,12 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         if (records.size() > 0) {
-            Collections.reverse(records);
+            Collections.sort(records, new Comparator<DataRecord>() {
+                @Override
+                public int compare(DataRecord o1, DataRecord o2) {
+                    return o2.getDate().compareTo(o1.getDate());
+                }
+            });
             ((Tab1Fragment) ((SectionsPageAdapter) mViewPager.getAdapter()).getItem(0)).UpdateDataList(records);
         }
     }

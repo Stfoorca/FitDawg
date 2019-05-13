@@ -12,5 +12,9 @@ public class DataRecord {
         this.waist=waist;
         this.weight=weight;
     }
+
+    public String getDate() {
+        return date;
+    }
 }
 
