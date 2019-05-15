@@ -2,8 +2,10 @@ package com.example.fitdawg;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +14,29 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.ml.custom.FirebaseModelDataType;
+import com.google.firebase.ml.custom.FirebaseModelInputOutputOptions;
+import com.google.firebase.ml.custom.FirebaseModelInputs;
+import com.google.firebase.ml.custom.FirebaseModelInterpreter;
+import com.google.firebase.ml.custom.FirebaseModelManager;
+import com.google.firebase.ml.custom.FirebaseModelOptions;
+import com.google.firebase.ml.custom.FirebaseModelOutputs;
+import com.google.firebase.ml.custom.model.FirebaseCloudModelSource;
+import com.google.firebase.ml.custom.model.FirebaseLocalModelSource;
+import com.google.firebase.ml.custom.model.FirebaseModelDownloadConditions;
 
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.security.auth.callback.Callback;
 
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
@@ -29,6 +51,9 @@ public class Tab3Fragment extends Fragment{
     private AdView mAdView;
     public ProfileActivity profileActivity;
     private View view;
+
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
@@ -38,11 +63,21 @@ public class Tab3Fragment extends Fragment{
 
         CreateChart();
 
+
+        if (profileActivity.predicted != null){
+            Log.e("ML KIT", ""+profileActivity.predicted[0]);
+            Toast.makeText(profileActivity, "Waga "+profileActivity.predicted[0]+"\nBiceps "+profileActivity.predicted[1]+"\nKlata "+profileActivity.predicted[2], Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(profileActivity, "PREDYKCJA NIE DZIAŁA", Toast.LENGTH_LONG).show();
+        }
+
         mAdView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
         return view;
     }
+
+
 
     public void CreateChart(){
         LineChartView lineChartView = view.findViewById(R.id.chart);
@@ -63,8 +98,7 @@ public class Tab3Fragment extends Fragment{
             xAxisData.add(profileActivity.records.get(i).date);
         }
 
-        //String[] xAxisData = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
-        //Float[] yAxisData= {50.0f, 56.0f, 61.0f, 67.0f, 72.0f, 79.0f, 73.0f, 65.0f, 58.0f, 55.0f};
+
 
         List xAxisValues = new ArrayList();
         List yAxisValuesArm = new ArrayList();

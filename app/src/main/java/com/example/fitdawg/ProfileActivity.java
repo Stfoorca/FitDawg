@@ -18,6 +18,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,6 +28,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.ml.custom.FirebaseModelDataType;
+import com.google.firebase.ml.custom.FirebaseModelInputOutputOptions;
+import com.google.firebase.ml.custom.FirebaseModelInputs;
+import com.google.firebase.ml.custom.FirebaseModelInterpreter;
+import com.google.firebase.ml.custom.FirebaseModelManager;
+import com.google.firebase.ml.custom.FirebaseModelOptions;
+import com.google.firebase.ml.custom.FirebaseModelOutputs;
+import com.google.firebase.ml.custom.model.FirebaseCloudModelSource;
+import com.google.firebase.ml.custom.model.FirebaseLocalModelSource;
+import com.google.firebase.ml.custom.model.FirebaseModelDownloadConditions;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -41,6 +54,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
     private Button logoutBtn;
+    public float[] predicted;
 
     public List<DataRecord> records = new ArrayList();
     public FirebaseAuth mAuth;
@@ -49,6 +63,12 @@ public class ProfileActivity extends AppCompatActivity {
     public User currentUser;
 
     public static ProfileActivity instance;
+    private FirebaseModelInterpreter mInpretpreter;
+    private FirebaseModelInputOutputOptions mDataOptions;
+
+    public interface MyCallback {
+        void onCallback(String value);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +104,12 @@ public class ProfileActivity extends AppCompatActivity {
                     currentUser.weight = "0";
                 }
                 ((Tab2Fragment) ((SectionsPageAdapter) mViewPager.getAdapter()).getItem(1)).UpdateUserProfile(currentUser);
-
+                // TODO
                 Log.d(TAG, "Value is: " + currentUser.email);
+
+                if (records.size() > 3){
+                    runModelInference(records);
+                }
             }
 
             @Override
@@ -106,6 +130,46 @@ public class ProfileActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         tabLayout.setupWithViewPager(mViewPager);
+
+        int[] inputDim = {1, 16};
+        int[] outputDim = {1, 3};
+
+        try{
+            mDataOptions = new FirebaseModelInputOutputOptions.Builder()
+                    .setInputFormat(0, FirebaseModelDataType.FLOAT32, inputDim)
+                    .setOutputFormat(0, FirebaseModelDataType.FLOAT32, outputDim)
+                    .build();
+
+            FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions
+                    .Builder()
+                    .build();
+
+            FirebaseLocalModelSource localModelSource =
+                    new FirebaseLocalModelSource.Builder("asset")
+                            .setAssetFilePath("localmodelasset.tflite").build();
+
+            FirebaseCloudModelSource cloudSource = new FirebaseCloudModelSource.Builder("przewidywanie-wagi")
+                    .enableModelUpdates(true)
+                    .setInitialDownloadConditions(conditions)
+                    .setUpdatesDownloadConditions(conditions)
+                    .build();
+
+            FirebaseModelManager manager = FirebaseModelManager.getInstance();
+            manager.registerLocalModelSource(localModelSource);
+            manager.registerCloudModelSource(cloudSource);
+
+            FirebaseModelOptions modelOptions =
+                    new FirebaseModelOptions.Builder()
+                            .setCloudModelName("przewidywanie-wagi")
+                            .build();
+
+            mInpretpreter = FirebaseModelInterpreter.getInstance(modelOptions);
+
+        } catch (FirebaseException e){
+            Log.e("Firebase ML", e.getMessage());
+        }
+
+
 
     }
 
@@ -129,6 +193,7 @@ public class ProfileActivity extends AppCompatActivity {
             records.add(new DataRecord(entry.getKey(), Double.parseDouble(singleData.get("arm").toString()), Double.parseDouble(singleData.get("waist").toString()), Double.parseDouble(singleData.get("weight").toString())));
         }
 
+
         if (records.size() > 0) {
             Collections.sort(records, new Comparator<DataRecord>() {
                 @Override
@@ -138,7 +203,55 @@ public class ProfileActivity extends AppCompatActivity {
             });
             ((Tab1Fragment) ((SectionsPageAdapter) mViewPager.getAdapter()).getItem(0)).UpdateDataList(records);
         }
+
+
+
     }
+
+    private void runModelInference(List<DataRecord> array) {
+        if (mInpretpreter == null) {
+            Log.e("Firebase ML", "Model not initialized");
+            return;
+        }
+
+        float[][] data = new float[1][16];
+
+        for (int i = 0; i < 4; i++) {
+            DataRecord local = array.get(i);
+            data[0][i] = Float.parseFloat(currentUser.height)/200;
+            data[0][i+1] = local.weight.floatValue()/100;
+            data[0][i+2] = local.arm.floatValue()/50;
+            data[0][i+3] = local.waist.floatValue()/100;
+
+        }
+
+        try {
+            FirebaseModelInputs inputs = new FirebaseModelInputs.Builder().add(data).build();
+
+
+
+            mInpretpreter.run(inputs, mDataOptions)
+                    .continueWith(new Continuation<FirebaseModelOutputs, Float[]>() {
+                        @Override
+                        public Float[] then(Task<FirebaseModelOutputs> task){
+                            FirebaseModelOutputs value = task.getResult();
+                            float[][] result = value.getOutput(0);
+
+                            predicted = result[0].clone();
+                            predicted[0] *= 100;
+                            predicted[1] *= 50;
+                            predicted[2] *= 100;
+                            return new Float[1];
+                        }
+                    });
+
+        } catch (FirebaseException e) {
+            Log.e("Firebase ML", e.getMessage());
+            return;
+        }
+        return;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
