@@ -104,7 +104,7 @@ public class ProfileActivity extends AppCompatActivity {
                     currentUser.weight = "0";
                 }
                 ((Tab2Fragment) ((SectionsPageAdapter) mViewPager.getAdapter()).getItem(1)).UpdateUserProfile(currentUser);
-                // TODO
+
                 Log.d(TAG, "Value is: " + currentUser.email);
 
                 if (records.size() > 3){
@@ -131,7 +131,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         tabLayout.setupWithViewPager(mViewPager);
 
-        int[] inputDim = {1, 16};
+        int[] inputDim = {1, 12};
         int[] outputDim = {1, 3};
 
         try{
@@ -208,27 +208,39 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    private float a,b,c;
+
     private void runModelInference(List<DataRecord> array) {
         if (mInpretpreter == null) {
             Log.e("Firebase ML", "Model not initialized");
             return;
         }
 
-        float[][] data = new float[1][16];
+        float[][] data = new float[1][12];
 
         for (int i = 0; i < 4; i++) {
             DataRecord local = array.get(i);
-            data[0][i] = Float.parseFloat(currentUser.height)/200;
-            data[0][i+1] = local.weight.floatValue()/100;
-            data[0][i+2] = local.arm.floatValue()/50;
-            data[0][i+3] = local.waist.floatValue()/100;
+            data[0][3*i+0] = local.weight.floatValue()/100;
+            data[0][3*i+1] = local.arm.floatValue()/25;
+            data[0][3*i+2] = local.waist.floatValue()/100;
+        }
+        a = data[0][0];
+        b = data[0][1];
+        c = data[0][2];
 
+        for (int i=0; i<12; i++){
+            if(i%3==0){
+                data[0][i] -= a;
+            }else if(i%3==1){
+                data[0][i] -= b;
+            }else{
+                data[0][i] -= c;
+            }
+            Log.e("COS", ""+data[0][i]);
         }
 
         try {
             FirebaseModelInputs inputs = new FirebaseModelInputs.Builder().add(data).build();
-
-
 
             mInpretpreter.run(inputs, mDataOptions)
                     .continueWith(new Continuation<FirebaseModelOutputs, Float[]>() {
@@ -238,8 +250,13 @@ public class ProfileActivity extends AppCompatActivity {
                             float[][] result = value.getOutput(0);
 
                             predicted = result[0].clone();
+
+                            predicted[0] += a;
+                            predicted[1] += b;
+                            predicted[2] += c;
+
                             predicted[0] *= 100;
-                            predicted[1] *= 50;
+                            predicted[1] *= 25;
                             predicted[2] *= 100;
                             return new Float[1];
                         }
