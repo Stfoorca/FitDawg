@@ -98,7 +98,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 currentUser = dataSnapshot.getValue(User.class);
                 if(records.size()>0) {
-                    currentUser.weight = records.get(records.size()-1).weight.toString();
+                    currentUser.weight = records.get(0).weight.toString();
                 }
                 else{
                     currentUser.weight = "0";

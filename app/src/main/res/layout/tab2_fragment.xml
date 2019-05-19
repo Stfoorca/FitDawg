@@ -41,6 +41,22 @@
         android:background="@drawable/rounded_button"
         android:text="+"
         android:textSize="36sp" />
+
+    <Button
+        android:id="@+id/changeProfileButton"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/addButton"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/rounded_button"
+        android:text="E"
+        android:textSize="36sp" />
     <TextView
         android:id="@+id/email"
         android:layout_width="match_parent"

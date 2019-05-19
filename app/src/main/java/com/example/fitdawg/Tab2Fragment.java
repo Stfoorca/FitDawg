@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,7 +44,7 @@ import java.util.UUID;
 public class Tab2Fragment extends Fragment{
     private static final String TAG = "Tab2Fragment";
     public Uri selectedImage;
-    private Button logoutBtn, addButton;
+    private Button logoutBtn, addButton, profileChangeButton;
     private TextView tab2username, tab2email, tab2gender, tab2age, tab2height, tab2bmi, tab2weight;
     public ImageView tab2profileImage;
     public ProfileActivity profileActivity;
@@ -67,7 +68,7 @@ public class Tab2Fragment extends Fragment{
         tab2profileImage = (ImageView)view.findViewById(R.id.profileImage);
         tab2height = (TextView)view.findViewById(R.id.height);
         tab2bmi = (TextView)view.findViewById(R.id.bmi);
-        tab2weight = view.findViewById(R.id.weight);
+        tab2weight = (TextView) view.findViewById(R.id.weight);
 
         mUser = profileActivity.mAuth.getCurrentUser();
 
@@ -76,6 +77,7 @@ public class Tab2Fragment extends Fragment{
 
         addButton = (Button) view.findViewById(R.id.addButton);
         logoutBtn = (Button) view.findViewById(R.id.logout);
+        profileChangeButton = view.findViewById(R.id.changeProfileButton);
 
         tab2profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +93,13 @@ public class Tab2Fragment extends Fragment{
             }
         });
 
+        profileChangeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().startActivity(new Intent(getActivity(), ProfileChangeActivity.class));
+            }
+        });
+
         return view;
     }
 
@@ -98,11 +107,9 @@ public class Tab2Fragment extends Fragment{
 
         tab2username.setText(user.name);
         tab2email.setText("Email:   " + user.email);
-        if (user.gender.toString().equals("M")){
-            tab2gender.setText("Gender:     " + "Male");
-        }else{
-            tab2gender.setText("Gender:     " + "Female");
-        }
+
+        tab2gender.setText("Gender:     " + user.gender);
+
 
         tab2age.setText("Age:   " + Integer.toString(Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(user.year)));
         tab2height.setText("Height:     " + user.height);
