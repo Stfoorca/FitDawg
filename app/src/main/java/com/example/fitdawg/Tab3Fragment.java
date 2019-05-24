@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
@@ -33,7 +35,13 @@ import com.google.firebase.ml.custom.model.FirebaseModelDownloadConditions;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.security.auth.callback.Callback;
@@ -66,7 +74,44 @@ public class Tab3Fragment extends Fragment{
         yearButton = view.findViewById(R.id.year);
         allButton = view.findViewById(R.id.all);
 
-        CreateChart(true);
+        try {
+            CreateChart(true, 0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        allButton.setOnClickListener(v -> {
+            try {
+                CreateChart(true, 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        weekButton.setOnClickListener(v -> {
+            try {
+                CreateChart(false, 3);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        monthButton.setOnClickListener(v -> {
+            try {
+                CreateChart(false, 2);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        yearButton.setOnClickListener(v -> {
+            try {
+                CreateChart(false, 1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
         mAdView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -76,8 +121,43 @@ public class Tab3Fragment extends Fragment{
 
 
 
-    public void CreateChart(boolean predict){
-        LineChartView lineChartView = view.findViewById(R.id.chart);
+    public void CreateChart(boolean predict, int filter) throws Exception {
+        //0-all, 1-year, 2-month, 3-week
+
+        RelativeLayout layout = view.findViewById(R.id.layout);
+        layout.removeAllViews();
+        ///lineChartView = new LineChartView(getContext());
+        LineChartView lineChartView = new LineChartView(getContext());//view.findViewById(R.id.chart);
+        layout.addView(lineChartView);
+
+        List <DataRecord>_records = new ArrayList<>();
+        //deep copy of records array list
+        for(DataRecord dr : profileActivity.records){
+            _records.add((DataRecord)dr.clone());
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        // Get current date
+        Calendar filterDate = Calendar.getInstance();
+        switch(filter){
+            case 0:
+                //all
+                //filterDate.add(Calendar.DATE, 0);
+                break;
+            case 1:
+                //year
+                filterDate.add(Calendar.DATE, -365);
+                break;
+            case 2:
+                //month
+                filterDate.add(Calendar.DATE, -30);
+                break;
+            case 3:
+                filterDate.add(Calendar.DATE, -7);
+                break;
+
+        }
+        if(filter!=0)
+            _records.removeIf(dr ->  formatter.format(filterDate.getTime()).compareTo(dr.date) >= 0);
 
         if(profileActivity.records==null) {
             lineChartView.setVisibility(View.INVISIBLE);
@@ -88,11 +168,11 @@ public class Tab3Fragment extends Fragment{
         List<Double> yAxisDataWaist = new ArrayList<Double>();
         List<Double> yAxisDataWeight = new ArrayList<Double>();
         List<String> xAxisData = new ArrayList<>();
-        for(int i=profileActivity.records.size()-1;i>=0;i--){
-            yAxisDataArm.add(profileActivity.records.get(i).arm);
-            yAxisDataWaist.add(profileActivity.records.get(i).waist);
-            yAxisDataWeight.add(profileActivity.records.get(i).weight);
-            xAxisData.add(profileActivity.records.get(i).date);
+        for(int i=_records.size()-1;i>=0;i--){
+            yAxisDataArm.add(_records.get(i).arm);
+            yAxisDataWaist.add(_records.get(i).waist);
+            yAxisDataWeight.add(_records.get(i).weight);
+            xAxisData.add(_records.get(i).date);
         }
         if(profileActivity.predicted!=null && predict){
             yAxisDataArm.add((double)profileActivity.predicted[1]);
@@ -122,9 +202,9 @@ public class Tab3Fragment extends Fragment{
             yAxisValuesWeight.add(new PointValue(i, Float.parseFloat(yAxisDataWeight.get(i).toString())));
         }
 
-        Line lineArm = new Line(yAxisValuesArm).setColor(Color.parseColor("#9C27B0"));
-        Line lineWaist = new Line(yAxisValuesWaist).setColor(Color.parseColor("#0000FF"));
-        Line lineWeight = new Line(yAxisValuesWeight).setColor(Color.parseColor("#00FF00"));
+        Line lineArm = new Line(yAxisValuesArm).setColor(Color.parseColor("#2B3C40"));
+        Line lineWaist = new Line(yAxisValuesWaist).setColor(Color.parseColor("#5E848C"));
+        Line lineWeight = new Line(yAxisValuesWeight).setColor(Color.parseColor("#D99AAB"));
         lineWeight.setHasLabels(true);
         lineArm.setHasLabels(true);
         lineWaist.setHasLabels(true);
@@ -136,6 +216,7 @@ public class Tab3Fragment extends Fragment{
 
         LineChartData data = new LineChartData();
         data.setLines(lines);
+        //Log.d("elo", lineChartView.getLineChartData());
         lineChartView.setLineChartData(data);
 
 

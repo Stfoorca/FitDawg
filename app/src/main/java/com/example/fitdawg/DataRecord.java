@@ -1,6 +1,6 @@
 package com.example.fitdawg;
 
-public class DataRecord {
+public class DataRecord implements Cloneable {
     Double arm, waist, weight;
     String date;
 
@@ -15,6 +15,11 @@ public class DataRecord {
 
     public String getDate() {
         return date;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
 
