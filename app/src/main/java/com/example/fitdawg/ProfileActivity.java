@@ -189,9 +189,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         for (Map.Entry<String, Object> entry : data.entrySet()) {
             Map singleData = (Map) entry.getValue();
-
-            records.add(new DataRecord(entry.getKey(), Double.parseDouble(singleData.get("arm").toString()), Double.parseDouble(singleData.get("waist").toString()), Double.parseDouble(singleData.get("weight").toString())));
+            try {
+                records.add(new DataRecord(entry.getKey(), Double.parseDouble(singleData.get("arm").toString()), Double.parseDouble(singleData.get("waist").toString()), Double.parseDouble(singleData.get("weight").toString())));
+            }
+            catch(Exception e){
+                Log.d("Error", "some error dude");
+            }
         }
+
 
 
         if (records.size() > 0) {
